@@ -8,8 +8,7 @@
   <script src="js/util.js" defer></script>
   <script src="js/icons.js" defer></script>
   <script src="js/nav.js" defer></script>
-  <script src="js/data.js" defer></script>
-  <script src="js/new-leave-request.js" defer></script>
+  <script type="module" src="js/new-leave-request.js"></script>
 </head>
 <body>
   <div id="nav"></div>
@@ -34,6 +33,13 @@
         <select id="leaveTypeId" required>
           <option value="">— เลือกประเภทการลา —</option>
         </select>
+
+        <!-- ปุ่ม AI ระดับ 1 (สัปดาห์ที่ 8) · กดแล้ว AI อ่านเหตุผล แล้วเสนอประเภทให้ คนยังแก้เองได้เสมอ -->
+        <div class="btn-row">
+          <button type="button" class="btn-ghost" id="ปุ่มAIจัดประเภท"><span data-icon="sparkles"></span>ให้ AI ช่วยจัดประเภทการลา</button>
+        </div>
+        <p class="hint">AI อ่านเฉพาะช่องเหตุผลการลา · อย่าใส่ข้อมูลส่วนตัวจริง เช่น ชื่อโรค เลขบัตร เบอร์โทร</p>
+        <div id="ผลAIจัดประเภท" class="alert alert-ai hidden" aria-live="polite"></div>
 
         <label for="startDate">วันที่เริ่มลา</label>
         <input type="date" id="startDate" required>

@@ -9,10 +9,12 @@
 // ─────────────────────────────────────────────────────────────
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+import {
+  getFirestore, connectFirestoreEmulator
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
 // ค่าชุดนี้ไม่ใช่ความลับ — ใครเปิดเว็บก็เห็นได้ และเอาขึ้น GitHub ได้
-//    ตัวที่กันคนแปลกหน้าจริง ๆ คือ Security Rules ซึ่งจะทำในสัปดาห์ที่ 7
+//    ตัวที่กันคนแปลกหน้าจริง ๆ คือ Security Rules ในไฟล์ firestore.rules
 const firebaseConfig = {
   apiKey: "AIzaSyBvKUwm7PknQijCSRFPFwx2fLrFJw-iAZA",
   authDomain: "leaveeasy-korakot.firebaseapp.com",
@@ -29,7 +31,23 @@ export const ตั้งค่าครบแล้ว =
   firebaseConfig.apiKey.startsWith("AIza") &&
   Boolean(firebaseConfig.projectId);
 
-const app = initializeApp(firebaseConfig);
+// ชื่อเดียวกับที่โค้ดตัวอย่างของผู้สอน (week7-end) ใช้ จะได้ไม่ต้องแก้ทุกหน้า
+export const hasConfig = ตั้งค่าครบแล้ว;
+
+export const app = initializeApp(firebaseConfig);
 
 // db = ประตูเข้าคลังเก็บข้อมูล Firestore · หน้าอื่นเขียน import { db } from "./firebase.js"
 export const db = getFirestore(app);
+
+// โหมดทดสอบในเครื่อง: เปิดผ่าน `firebase emulators:start` (http://localhost:5050)
+// จะคุยกับฐานข้อมูลจำลองในเครื่องแทนของจริง — ลองกฎ ลองสวมรอยได้โดยไม่แตะข้อมูลจริง
+// ส่วน `npm run dev` (พอร์ตอื่น) และเว็บออนไลน์ ยังใช้ฐานข้อมูลจริงเหมือนเดิม
+export const ใช้ฐานจำลอง = location.hostname === "localhost" && location.port === "5050";
+if (ใช้ฐานจำลอง) connectFirestoreEmulator(db, "localhost", 8080);
+
+// ส่งต่อคำสั่งของ Firestore ที่หน้าอื่นต้องใช้ จากเวอร์ชันเดียวกับข้างบน
+// ถ้าแต่ละหน้าไป import คนละเวอร์ชันเอง Firebase จะมองว่าเป็นคนละแอป แล้วล็อกอินหายเงียบ ๆ
+export {
+  collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
+  query, where, orderBy, limit
+} from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
