@@ -1,0 +1,117 @@
+// ─────────────────────────────────────────────────────────────
+// firestore.rules — กฎเฝ้าข้อมูลของ LeaveEasy (สัปดาห์ที่ 8 · รายห้องตาม ACL.md)
+//
+// ซ่อนปุ่มบนหน้าเว็บยังไม่ใช่ความปลอดภัย — คนที่ยิงคำขอตรงเข้าฐานข้อมูลไม่ผ่านหน้าเว็บเรา
+// ไฟล์นี้คือประตูจริง ทุกข้อต้องตรงกับตารางใน ACL.md
+//
+// บทบาทอ่านจากช่อง role ในไฟล์ users/{uid} ของคนที่ล็อกอินอยู่
+//   employee = ผู้ขอลา · manager = ผู้อนุมัติ · hr = ฝ่ายบุคคล
+// เปลี่ยนบทบาทได้ทางเดียวคือแก้ใน Firebase Console (ผู้ใช้แก้บทบาทตัวเองไม่ได้)
+//
+// แก้ไฟล์นี้แล้วต้อง deploy:  firebase deploy --only firestore:rules
+// ─────────────────────────────────────────────────────────────
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── ตัวช่วย ────────────────────────────────────────────────
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function role() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    // ผู้อนุมัติหรือฝ่ายบุคคล = ดูได้ทุกใบ พิจารณาได้
+    function isReviewer() {
+      return isSignedIn() && role() in ['manager', 'hr'];
+    }
+    function isHr() {
+      return isSignedIn() && role() == 'hr';
+    }
+    function leaveRequest(id) {
+      return get(/databases/$(database)/documents/leaveRequests/$(id)).data;
+    }
+    function isOwnerOf(id) {
+      return isSignedIn() && leaveRequest(id).requesterId == request.auth.uid;
+    }
+    // ช่องที่ถูกแก้ในคำขอนี้ มีแค่ช่องในรายการเท่านั้น
+    function onlyChanges(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
+    }
+
+    // ── users ─────────────────────────────────────────────────
+    match /users/{uid} {
+      // ดูโปรไฟล์ตัวเองได้ · ผู้พิจารณาดูของทุกคนได้ (ต้องรู้ชื่อผู้ขอลา)
+      allow read: if isSignedIn() && (request.auth.uid == uid || isReviewer());
+
+      // สร้างได้เฉพาะไฟล์ของตัวเอง และต้องเริ่มที่ employee เสมอ — กันสมัครเป็น hr เอง
+      allow create: if isSignedIn() && request.auth.uid == uid
+                    && request.resource.data.role == 'employee';
+
+      // แก้ชื่อตัวเองได้ แต่ห้ามแตะช่อง role
+      allow update: if isSignedIn() && request.auth.uid == uid
+                    && onlyChanges(['name']);
+
+      allow delete: if false;
+    }
+
+    // ── leaveTypes ────────────────────────────────────────────
+    match /leaveTypes/{typeId} {
+      allow read: if isSignedIn();                // ทุกคนต้องเห็นเพื่อเลือกตอนยื่นใบลา
+      allow create, update, delete: if isHr();
+    }
+
+    // ── leaveRequests ─────────────────────────────────────────
+    match /leaveRequests/{reqId} {
+      // ผู้ขอลาเห็นเฉพาะใบของตัวเอง · ผู้พิจารณาเห็นทุกใบ
+      // (หน้ารายการของผู้ขอลาต้อง where requesterId == uid ในคำสั่ง ไม่งั้นโดนปฏิเสธทั้งก้อน)
+      allow read: if isReviewer()
+                  || (isSignedIn() && resource.data.requesterId == request.auth.uid);
+
+      // ยื่นใบลาได้เฉพาะในนามตัวเอง และต้องเริ่มที่ รอพิจารณา
+      allow create: if isSignedIn()
+                    && request.resource.data.requesterId == request.auth.uid
+                    && request.resource.data.status == 'รอพิจารณา';
+
+      allow update: if
+        // อนุมัติ / ไม่อนุมัติ — ผู้พิจารณา · ใบที่ยังรอ · ไม่ใช่ใบของตัวเอง · แก้ได้แค่ช่อง status
+        (isReviewer()
+          && resource.data.status == 'รอพิจารณา'
+          && resource.data.requesterId != request.auth.uid
+          && onlyChanges(['status'])
+          && request.resource.data.status in ['อนุมัติ', 'ไม่อนุมัติ'])
+        // ฝ่ายบุคคลกำหนดผู้อนุมัติให้ใบลาได้ (spec หัวข้อ 2)
+        || (isHr() && onlyChanges(['approverId', 'approverName']))
+        // ผู้ช่วย AI เขียนสรุปได้ช่องเดียว — ห้ามเปลี่ยนสถานะพร้อมกันเด็ดขาด
+        || (isReviewer() && onlyChanges(['aiSuggestion']));
+
+      // ลบได้เฉพาะเจ้าของ และเฉพาะใบที่ยังรอพิจารณา
+      allow delete: if isSignedIn()
+                    && resource.data.requesterId == request.auth.uid
+                    && resource.data.status == 'รอพิจารณา';
+
+      // ── โฟลเดอร์ย่อย approvals (ความเห็น) ──
+      match /approvals/{approvalId} {
+        allow read: if isReviewer() || isOwnerOf(reqId);
+        // เขียนความเห็นได้ในนามตัวเองเท่านั้น
+        allow create: if (isReviewer() || isOwnerOf(reqId))
+                      && request.resource.data.authorId == request.auth.uid;
+        allow update, delete: if false;   // ความเห็นที่ส่งแล้วแก้หรือลบไม่ได้
+      }
+
+      // ── โฟลเดอร์ย่อย aiLog (บันทึกการเรียก AI) ──
+      match /aiLog/{logId} {
+        allow read: if isReviewer();
+        allow create: if isReviewer()
+                      && request.resource.data.createdBy == request.auth.uid
+                      && request.resource.data.keys().hasOnly(
+                           ['input', 'output', 'createdAt', 'createdBy', 'model']);
+        allow update, delete: if false;   // บันทึกเขียนต่อท้ายอย่างเดียว ห้ามแก้ย้อนหลัง
+      }
+    }
+
+    // โฟลเดอร์อื่นที่ไม่ได้เขียนกฎไว้ข้างบน = ปิดหมด
+  }
+}

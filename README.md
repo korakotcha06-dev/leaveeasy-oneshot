@@ -1,4 +1,6 @@
-# 🔧 LeaveEasy — จุดเริ่มต้นของใบงาน
+**เว็บออนไลน์: https://leaveeasy-korakot.web.app** (ต้องสมัครสมาชิกหรือล็อกอินก่อน · ตารางสิทธิ์อยู่ใน [ACL.md](ACL.md))
+
+# LeaveEasy — จุดเริ่มต้นของใบงาน
 
 **ADT-RAISE Non-Degree Batch 2 · Module 2: MVP-Ready** (สัปดาห์ที่ 6–9)
 

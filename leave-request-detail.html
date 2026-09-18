@@ -8,8 +8,7 @@
   <script src="js/util.js" defer></script>
   <script src="js/icons.js" defer></script>
   <script src="js/nav.js" defer></script>
-  <script src="js/data.js" defer></script>
-  <script src="js/leave-request-detail.js" defer></script>
+  <script type="module" src="js/leave-request-detail.js"></script>
 </head>
 <body>
   <div id="nav"></div>
@@ -21,6 +20,18 @@
 
     <div id="กล่องใบลา" class="card">
       <p>กำลังโหลดข้อมูล…</p>
+    </div>
+
+    <!-- ผู้ช่วย AI ระดับ 2 (สัปดาห์ที่ 8) · เห็นเฉพาะผู้อนุมัติและฝ่ายบุคคล
+         AI สรุปให้อ่านเท่านั้น ไม่ได้ตัดสินแทน สถานะเปลี่ยนได้ด้วยการกดของคนเท่านั้น -->
+    <div id="กล่องสรุปAI" class="card hidden">
+      <h2>สรุปใบลาโดย AI</h2>
+      <p class="hint">AI อ่านใบลาและความเห็นทั้งหมด แล้วสรุปให้อ่านก่อนตัดสินใจ · ผลการพิจารณาเป็นของคนที่กดเท่านั้น</p>
+      <div id="ผลสรุปAI"></div>
+      <ol id="ขั้นตอนAI" class="hint hidden"></ol>
+      <div class="btn-row">
+        <button type="button" class="btn-ghost" id="ปุ่มAIสรุป"><span data-icon="sparkles"></span>ให้ AI ช่วยสรุปใบลา</button>
+      </div>
     </div>
 
     <div id="กล่องความเห็น" class="card hidden">
