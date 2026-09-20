@@ -1,3 +1,7 @@
+**เว็บออนไลน์: https://leaveeasy-oneshot-korakot.web.app** · **ผลการทดสอบอัตโนมัติ 204 ข้อ: [test-results.md](test-results.md)**
+
+> URL นี้คือโค้ดชุดในโฟลเดอร์นี้ที่ขึ้นเว็บจริงแล้ว ตอบ HTTP 200 ครบทั้ง 8 หน้า · ดูหัวข้อ [เว็บจริง](#เว็บจริง)
+
 # LeaveEasy — ระบบขอลาออนไลน์
 
 ระบบยื่นและอนุมัติใบลาของที่ทำงาน เขียนเป็นงานเรียน **ADT-RAISE Batch 2 · Module 2 (สัปดาห์ที่ 6–9)**
@@ -13,13 +17,16 @@
 
 | | |
 |---|---|
-| URL | https://leaveeasy-korakot.web.app |
+| URL | https://leaveeasy-oneshot-korakot.web.app |
 | Firebase project id | `leaveeasy-korakot` |
+| Hosting site id | `leaveeasy-oneshot-korakot` (ตั้งไว้ในช่อง `hosting.site` ของ `firebase.json`) |
 | บริการที่ใช้ | Firestore · Firebase Authentication · Firebase Hosting |
 
-> **สิ่งที่ต้องรู้ก่อนไปเปิดดู** — URL นี้เปิดได้จริง (ตอบ HTTP 200 ครบทุกหน้า) แต่ไฟล์ที่อยู่บนนั้น
-> เป็นของรอบ deploy ก่อนหน้า **ไม่ใช่โค้ดชุดล่าสุดในโฟลเดอร์นี้** (ตรวจง่าย ๆ คือ `<title>` ของหน้าแรกไม่ตรงกัน)
-> ถ้าต้องการให้เว็บจริงตรงกับโค้ดชุดนี้ ต้องสั่ง deploy ใหม่ ดูหัวข้อ [นำขึ้นออนไลน์](#นำขึ้นออนไลน์)
+> **สิ่งที่ต้องรู้ก่อนไปเปิดดู** — site นี้ขึ้นจากโค้ดชุดในโฟลเดอร์นี้ ตรวจแล้วว่า `<title>` ของหน้าแรก
+> ตรงกับ `index.html` และทั้ง 8 หน้าตอบ HTTP 200
+>
+> site เดิม `https://leaveeasy-korakot.web.app` ยังเปิดได้อยู่ แต่เป็นไฟล์ของรอบก่อนหน้า
+> **ไม่ใช่โค้ดชุดนี้** ให้ใช้ URL ด้านบนแทน
 
 ---
 
@@ -141,7 +148,7 @@ cp js/ai-config.example.js js/ai-config.js
 
 | ชุด | จำนวน | เครื่องมือ | คำสั่ง |
 |---|---|---|---|
-| เทสหน้าจอ (end-to-end) | **64 เทส** ใน `tests/e2e/` และ `tests/smoke.spec.js` | Playwright + Chromium | `npm run test:e2e` |
+| เทสหน้าจอ (end-to-end) | **92 เทส** ใน `tests/e2e/` และ `tests/smoke.spec.js` | Playwright + Chromium | `npm run test:e2e` |
 | เทสกฎความปลอดภัย | **112 ข้อยืนยัน** ใน `tests/rules/` | `@firebase/rules-unit-testing` + `node --test` | `npm run test:rules` |
 
 ลำดับที่ใช้ได้จริงตั้งแต่ศูนย์

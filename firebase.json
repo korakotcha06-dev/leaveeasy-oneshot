@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "leaveeasy-oneshot-korakot",
     "public": ".",
     "ignore": [
       "firebase.json",

@@ -66,7 +66,7 @@ npm script ใส่ให้แล้วทุกตัว **ให้เรี
 | คำสั่ง | ทำอะไร |
 |---|---|
 | `npm run emulators` | เปิด emulator ค้างไว้ (hosting 5050 · firestore 8080 · auth 9099 · UI 4000) |
-| `npm run test:e2e` | รันเทสหน้าจอ 64 เทส (ต้องมี emulator เปิดอยู่แล้ว) |
+| `npm run test:e2e` | รันเทสหน้าจอ 92 เทส (ต้องมี emulator เปิดอยู่แล้ว) |
 | `npm run test:rules` | รันเทสกฎ 112 ข้อยืนยัน |
 | `npm run test:ci` | เปิด emulator รันเทส แล้วเก็บกวาดให้เองครบในคำสั่งเดียว |
 | `npm run dev` | เปิดเว็บที่พอร์ต 3000 ซึ่ง **คุยกับฐานข้อมูลจริง** |
