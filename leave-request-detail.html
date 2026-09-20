@@ -3,48 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>รายละเอียดใบลา · LeaveEasy</title>
+  <title>รายละเอียดใบลา — LeaveEasy</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/util.js" defer></script>
-  <script src="js/icons.js" defer></script>
-  <script src="js/nav.js" defer></script>
-  <script type="module" src="js/leave-request-detail.js"></script>
 </head>
 <body>
-  <div id="nav"></div>
 
-  <div class="container">
-    <a class="backlink" href="leave-requests.html"><span data-icon="arrow-left"></span>กลับไปรายการใบลา</a>
-    <h1 id="หัวเรื่อง">รายละเอียดใบลา</h1>
-    <p class="subtitle" id="คำโปรย">กำลังเปิดใบลา</p>
+  <!-- nav-root ถูกเติมเนื้อหาโดย js/nav.js ตอนโหลดหน้า เหมือนกับ index.html -->
+  <div id="nav-root"></div>
 
-    <div id="กล่องใบลา" class="card">
-      <p>กำลังโหลดข้อมูล…</p>
+  <main class="page">
+
+    <div class="toolbar">
+      <h1 class="page-title">รายละเอียดใบลา</h1>
+      <!--
+        ปุ่มย้อนกลับทำเป็นลิงก์จริง ไม่ใช่ปุ่มที่ต้องรอ JavaScript ผูกเหตุการณ์
+        เพราะถ้าสคริปต์ล้มระหว่างโหลด ผู้ใช้ยังต้องออกจากหน้านี้ได้อยู่ดี
+      -->
+      <a class="btn btn-ghost" data-testid="back-button" href="leave-requests.html">กลับไปหน้ารายการ</a>
     </div>
 
-    <!-- ผู้ช่วย AI ระดับ 2 (สัปดาห์ที่ 8) · เห็นเฉพาะผู้อนุมัติและฝ่ายบุคคล
-         AI สรุปให้อ่านเท่านั้น ไม่ได้ตัดสินแทน สถานะเปลี่ยนได้ด้วยการกดของคนเท่านั้น -->
-    <div id="กล่องสรุปAI" class="card hidden">
-      <h2>สรุปใบลาโดย AI</h2>
-      <p class="hint">AI อ่านใบลาและความเห็นทั้งหมด แล้วสรุปให้อ่านก่อนตัดสินใจ · ผลการพิจารณาเป็นของคนที่กดเท่านั้น</p>
-      <div id="ผลสรุปAI"></div>
-      <ol id="ขั้นตอนAI" class="hint hidden"></ol>
-      <div class="btn-row">
-        <button type="button" class="btn-ghost" id="ปุ่มAIสรุป"><span data-icon="sparkles"></span>ให้ AI ช่วยสรุปใบลา</button>
+    <!--
+      ช่องแสดงข้อความผิดพลาด/คำเตือน มีช่องเดียวต่อหนึ่งหน้า
+      เพราะ data-testid="error-message" ต้องไม่ซ้ำกันในหน้าเดียว
+      ไม่อย่างนั้นชุดทดสอบจะเจอหลายตัวแล้วไม่รู้ว่าต้องอ่านตัวไหน
+    -->
+    <p class="error-message" data-testid="error-message" hidden></p>
+
+    <section class="card">
+      <h2 class="page-title">ข้อมูลใบลา</h2>
+
+      <!--
+        ทุกช่องเริ่มต้นว่างเปล่า แล้วให้ js/leave-request-detail.js เติมค่าให้
+        ใช้ textContent เติมค่า ไม่ใช่ innerHTML เพราะหัวข้อและเหตุผลเป็นข้อความที่ผู้ใช้พิมพ์เอง
+      -->
+      <div class="field">
+        <div class="field-label">หัวข้อ</div>
+        <div data-testid="detail-title"></div>
       </div>
-    </div>
 
-    <div id="กล่องความเห็น" class="card hidden">
-      <h2>ความเห็นการอนุมัติ</h2>
-      <div id="รายการความเห็น"></div>
-
-      <label for="ข้อความความเห็น">เขียนความเห็นใหม่</label>
-      <textarea id="ข้อความความเห็น" placeholder="พิมพ์ความเห็นถึงผู้ขอลา"></textarea>
-      <div id="เตือนความเห็น" class="alert alert-error hidden" role="alert"></div>
-      <div class="btn-row">
-        <button type="button" id="ปุ่มส่งความเห็น">ส่งความเห็น</button>
+      <div class="field">
+        <div class="field-label">เหตุผล</div>
+        <div data-testid="detail-reason"></div>
       </div>
-    </div>
-  </div>
+
+      <div class="field">
+        <div class="field-label">ประเภทการลา</div>
+        <div data-testid="detail-type"></div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">วันที่ลา</div>
+        <div data-testid="detail-dates"></div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">ผู้ขอลา</div>
+        <div data-testid="detail-requester"></div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">ผู้อนุมัติ</div>
+        <div data-testid="detail-approver"></div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">สถานะ</div>
+        <!-- ป้ายสถานะถูกสร้างด้วย statusBadgeHtml() จาก util.js ซึ่งใส่ data-testid="detail-status" มาให้แล้ว -->
+        <div id="status-slot"></div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">วันที่ยื่น</div>
+        <div data-testid="detail-created"></div>
+      </div>
+
+      <!--
+        ปุ่มทั้งสามเริ่มต้นเป็น disabled ตั้งแต่ใน HTML โดยตั้งใจ
+        เพราะตอนหน้าเพิ่งโหลด เรายังไม่รู้บทบาทของผู้ใช้และยังไม่รู้สถานะของใบลา
+        การเริ่มที่ "กดไม่ได้" แล้วค่อยเปิดให้กดเมื่อรู้ข้อมูลครบ ปลอดภัยกว่า
+        การเริ่มที่ "กดได้" แล้วค่อยรีบปิด ซึ่งมีช่องว่างเสี้ยววินาทีให้กดทัน
+      -->
+      <div class="toolbar">
+        <button type="button" class="btn btn-primary" data-testid="approve-button" disabled>อนุมัติ</button>
+        <button type="button" class="btn" data-testid="reject-button" disabled>ไม่อนุมัติ</button>
+        <button type="button" class="btn btn-danger" data-testid="delete-button" disabled>ลบใบลา</button>
+      </div>
+
+      <!--
+        คำอธิบายกรณีหัวหน้างานหรือฝ่ายบุคคลเปิดใบลาที่ตัวเองเป็นคนยื่น
+        ปุ่มที่กดไม่ได้โดยไม่บอกเหตุผล ทำให้ผู้ใช้คิดว่าระบบพัง จึงต้องมีข้อความกำกับ
+        ปกติซ่อนไว้ · js/leave-request-detail.js เป็นคนเปิดให้เห็นเมื่อเข้าเงื่อนไขนี้
+      -->
+      <p class="empty" id="self-review-note" hidden>
+        ใบลานี้เป็นใบที่คุณยื่นเอง จึงพิจารณาเองไม่ได้
+        ต้องให้หัวหน้างานหรือฝ่ายบุคคลคนอื่นเป็นผู้อนุมัติหรือไม่อนุมัติ
+      </p>
+    </section>
+
+    <section class="card">
+      <h2 class="page-title">ความเห็นการอนุมัติ</h2>
+
+      <!-- รายการความเห็น เรียงจากเก่าไปใหม่ เพื่อให้อ่านไล่ตามลำดับเวลาได้เหมือนอ่านแชท -->
+      <div data-testid="approval-list"></div>
+
+      <form id="comment-form" novalidate>
+        <div class="field">
+          <label class="field-label" for="comment-input">เขียนความเห็น</label>
+          <textarea class="field-input" id="comment-input" data-testid="comment-input" rows="3"></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit" data-testid="comment-submit">ส่งความเห็น</button>
+      </form>
+    </section>
+
+  </main>
+
+  <script type="module" src="js/nav.js"></script>
+  <script type="module" src="js/leave-request-detail.js"></script>
 </body>
 </html>

@@ -1,58 +1,54 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LeaveEasy ระบบขอลาออนไลน์</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/icons.js" defer></script>
-  <script src="js/nav.js" defer></script>
-  <script type="module" src="js/home.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>LeaveEasy — ระบบขอลางาน</title>
+<link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="nav"></div>
+<!-- nav-root ถูกเติมเนื้อหาโดย js/nav.js ตอนโหลดหน้า -->
+<div id="nav-root"></div>
 
-  <div class="container">
-    <h1>LeaveEasy ระบบขอลาออนไลน์</h1>
-    <p class="subtitle">พนักงานยื่นใบลา หัวหน้าพิจารณา อนุมัติหรือไม่อนุมัติ แล้วบันทึกผลไว้ที่เดียว</p>
+<main class="page">
+  <section class="home-hero">
+    <h1>LeaveEasy</h1>
+    <p class="page-lead">
+      ระบบยื่นและอนุมัติใบลางานออนไลน์ พนักงานยื่นใบลาได้ทุกที่ทุกเวลา
+      หัวหน้างานและฝ่ายบุคคลตรวจสอบและอนุมัติผ่านหน้าเว็บเดียวกัน
+      ไม่ต้องพิมพ์กระดาษหรือส่งเอกสารวนไปมา
+    </p>
+    <a id="home-login-link" class="btn btn-primary" href="login.html">เข้าสู่ระบบ / สมัครสมาชิก</a>
+  </section>
 
-    <div class="card">
-      <h2>เริ่มใช้งาน</h2>
-      <div id="กล่องเข้าสู่ระบบ" class="btn-row">
-        <a class="btn" href="login.html">เข้าสู่ระบบ / สมัครสมาชิก</a>
-      </div>
-      <p class="hint">ทุกหน้าของระบบต้องเข้าสู่ระบบก่อน · บัญชีที่สมัครใหม่จะได้บทบาทผู้ขอลา</p>
-
-      <h2>หน้าจอของระบบ</h2>
-      <div class="btn-row">
-        <a class="btn" href="leave-requests.html">รายการใบลา</a>
-        <a class="btn btn-ghost" href="new-leave-request.html">ยื่นใบลาใหม่</a>
-        <a class="btn btn-ghost" href="leave-types.html">จัดการประเภทการลา</a>
-        <a class="btn btn-ghost" href="dashboard.html">แดชบอร์ดสรุป</a>
-      </div>
+  <section class="card">
+    <h2 class="page-title" style="margin-top:0">เมนูหลัก</h2>
+    <div class="home-links">
+      <a class="home-link-card" href="leave-requests.html">
+        <div class="home-link-title">รายการใบลา</div>
+        <p class="home-link-desc">ดูใบลาทั้งหมดพร้อมสถานะ กดเข้าไปดูรายละเอียดแต่ละใบได้</p>
+      </a>
+      <a class="home-link-card" href="new-leave-request.html">
+        <div class="home-link-title">ยื่นใบลาใหม่</div>
+        <p class="home-link-desc">กรอกหัวข้อ เหตุผล ประเภทการลา และช่วงวันที่ลา</p>
+      </a>
+      <a class="home-link-card" href="leave-types.html">
+        <div class="home-link-title">ประเภทการลา</div>
+        <p class="home-link-desc">จัดการรายชื่อประเภทการลาที่ใช้ในระบบ (ฝ่ายบุคคล)</p>
+      </a>
+      <a class="home-link-card" href="dashboard.html">
+        <div class="home-link-title">แดชบอร์ด</div>
+        <p class="home-link-desc">สรุปจำนวนใบลาตามสถานะ และใบลาล่าสุด 5 รายการ</p>
+      </a>
+      <a class="home-link-card" href="seed.html">
+        <div class="home-link-title">โหลดข้อมูลตัวอย่าง</div>
+        <p class="home-link-desc">เติมข้อมูลตัวอย่างลงฐานข้อมูล สำหรับทดสอบและสาธิต</p>
+      </a>
     </div>
+  </section>
+</main>
 
-    <div class="card">
-      <h2>ผู้ใช้ของระบบ 3 บทบาท</h2>
-      <table>
-        <thead><tr><th>บทบาท</th><th>รหัสในระบบ</th><th>ทำอะไรได้</th></tr></thead>
-        <tbody>
-          <tr><td><span data-icon="user"></span>ผู้ขอลา</td><td>employee</td><td>ยื่นใบลา ดูใบของตัวเอง ลบใบที่ยังรอพิจารณา</td></tr>
-          <tr><td><span data-icon="check-circle"></span>ผู้อนุมัติ</td><td>manager</td><td>ดูใบลาทุกใบ อนุมัติหรือไม่อนุมัติ เขียนความเห็น</td></tr>
-          <tr><td><span data-icon="file-text"></span>ฝ่ายบุคคล</td><td>hr</td><td>ทำได้ทุกอย่างที่ผู้อนุมัติทำได้ และจัดการประเภทการลา</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="card">
-      <h2>สถานะของใบลามี 3 ค่า</h2>
-      <p>
-        <span class="badge badge-รอพิจารณา">รอพิจารณา</span> →
-        <span class="badge badge-อนุมัติ">อนุมัติ</span> หรือ
-        <span class="badge badge-ไม่อนุมัติ">ไม่อนุมัติ</span>
-      </p>
-      <p class="hint">ใบที่พิจารณาแล้ว เปลี่ยนสถานะต่อไม่ได้</p>
-    </div>
-  </div>
+<script type="module" src="js/nav.js"></script>
+<script type="module" src="js/home.js"></script>
 </body>
 </html>

@@ -1,31 +1,52 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>แดชบอร์ดสรุป · LeaveEasy</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/util.js" defer></script>
-  <script src="js/icons.js" defer></script>
-  <script src="js/nav.js" defer></script>
-  <script type="module" src="js/dashboard.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>แดชบอร์ด — LeaveEasy</title>
+<link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="nav"></div>
+<!-- nav-root ถูกเติมเนื้อหาโดย js/nav.js ตอนโหลดหน้า เหมือน index.html -->
+<div id="nav-root"></div>
 
-  <div class="container">
-    <h1>แดชบอร์ดสรุป</h1>
-    <p class="subtitle">ภาพรวมใบลาในระบบ กดที่กล่องตัวเลขเพื่อดูเฉพาะสถานะนั้น</p>
+<main class="page">
+  <p class="field-error" data-testid="error-message" hidden></p>
 
+  <h1 class="page-title" style="margin-top:0">แดชบอร์ด</h1>
+  <p class="page-lead">
+    สรุปจำนวนใบลาตามสถานะ และใบลาล่าสุด 5 รายการ
+  </p>
 
-    <div id="กล่องตัวเลข" class="stat-row"></div>
+  <!--
+    US-11 ถูกเลื่อนไป Module 3 ตามสเปกหัวข้อ 3 (US-11) และหัวข้อ 4 (หน้าที่ 5)
+    หน้านี้จึงคงเป็น "โครงหน้าจาก prototype" ต่อไปในสัปดาห์นี้ — ห้ามต่อ Firestore
+    ป้ายด้านล่างต้องเห็นชัดเจน กันคนเข้าใจผิดว่าตัวเลขที่เห็นเป็นตัวเลขใบลาจริงของตัวเอง
+  -->
+  <p
+    data-testid="prototype-notice"
+    style="background:var(--color-pending-bg); color:var(--color-pending-text);
+           border-radius:8px; padding:12px 16px; font-weight:600; margin:0 0 var(--space-4);"
+  >
+    หน้านี้เป็นโครงหน้าจาก prototype ตัวเลขและรายการด้านล่างเป็นข้อมูลตัวอย่างคงที่
+    ไม่ใช่ตัวเลขใบลาจริงของคุณ — การต่อข้อมูลจริงเป็นเนื้อหาของ Module 3
+  </p>
 
-    <div class="card">
-      <h2>ใบลา 5 รายการล่าสุด</h2>
-      <div id="ใบลาล่าสุด">
-        <p>กำลังโหลดข้อมูล…</p>
-      </div>
-    </div>
-  </div>
+  <!--
+    กล่องตัวเลข 3 กล่อง (US-11) — js/dashboard.js เติม HTML เข้ามาจากข้อมูลตัวอย่าง
+    คงที่ (ตรงกับสเปกหัวข้อ 7.3) ไม่ใช่ข้อมูลจริงจาก Firestore แล้ว เพราะ US-11
+    ถูกเลื่อนไป Module 3
+  -->
+  <div class="home-links" id="count-boxes"></div>
+
+  <section class="card">
+    <h2 class="page-title" style="margin-top:0">ใบลาล่าสุด 5 รายการ</h2>
+    <ul data-testid="recent-list" id="recent-list"
+        style="list-style:none; margin:0; padding:0;"></ul>
+  </section>
+</main>
+
+<script type="module" src="js/nav.js"></script>
+<script type="module" src="js/dashboard.js"></script>
 </body>
 </html>

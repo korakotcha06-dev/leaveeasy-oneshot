@@ -1,35 +1,60 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>จัดการประเภทการลา · LeaveEasy</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/util.js" defer></script>
-  <script src="js/icons.js" defer></script>
-  <script src="js/nav.js" defer></script>
-  <script type="module" src="js/leave-types.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ประเภทการลา — LeaveEasy</title>
+<link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="nav"></div>
+<!-- nav-root ถูกเติมเนื้อหาโดย js/nav.js ตอนโหลดหน้า (ดูรูปแบบเดียวกับ index.html) -->
+<div id="nav-root"></div>
 
-  <div class="container">
-    <h1>จัดการประเภทการลา</h1>
-    <p class="subtitle">ประเภทที่เพิ่มที่นี่ จะไปโผล่ในรายการเลื่อนลงของหน้ายื่นใบลาใหม่</p>
+<main class="page">
+  <h1 class="page-title">จัดการประเภทการลา</h1>
 
-    <div class="card">
-      <label for="ชื่อประเภทใหม่">เพิ่มประเภทการลาใหม่</label>
-      <input type="text" id="ชื่อประเภทใหม่" placeholder="เช่น ลาคลอด">
-      <div id="เตือนประเภท" class="alert alert-error hidden" role="alert"></div>
-      <div class="btn-row">
-        <button type="button" id="ปุ่มเพิ่ม">เพิ่มประเภทการลา</button>
-      </div>
+  <!-- ช่องแสดงข้อผิดพลาดช่องเดียวของทั้งหน้า ใช้ร่วมกันทั้งเพิ่ม แก้ไข และลบ -->
+  <p class="error-message" data-testid="error-message" hidden></p>
+
+  <!--
+    ฟอร์มเพิ่มซ่อนไว้ด้วย hidden ตั้งแต่ต้น (กันแวบให้เห็นก่อนรู้บทบาทผู้ใช้)
+    js/leave-types.js เป็นคนตัดสินใจว่าจะโชว์ (hr) หรือลบทิ้งจาก DOM เลย (ไม่ใช่ hr)
+    หลังจากรู้บทบาทแน่ชัดแล้วเท่านั้น เพราะสเปกหัวข้อ 4 ให้ซ่อนหน้านี้จากคนที่ไม่ใช่ฝ่ายบุคคล
+  -->
+  <form id="add-type-form" class="card toolbar" novalidate hidden>
+    <div class="field" style="flex: 1; min-width: 200px;">
+      <label class="field-label" for="input-type-name">ชื่อประเภทการลา</label>
+      <input
+        class="field-input"
+        id="input-type-name"
+        data-testid="type-name-input"
+        type="text"
+        name="name"
+        autocomplete="off"
+      />
     </div>
+    <button type="submit" class="btn btn-primary" data-testid="type-add-button">เพิ่ม</button>
+  </form>
 
-    <div class="card">
-      <h2>ประเภทการลาที่มีอยู่</h2>
-      <div id="ตารางประเภท"></div>
-    </div>
+  <!-- ข้อความนี้เป็นแค่คำอธิบาย ไม่ใช่ปุ่มที่มีสิทธิ์ผูกอยู่ จึงใช้ hidden toggle ได้ตามปกติ -->
+  <p class="page-lead" data-testid="hr-required-notice" hidden>
+    เฉพาะฝ่ายบุคคลเท่านั้นที่เพิ่ม แก้ไข หรือลบประเภทการลาได้ หน้านี้แสดงรายการให้ดูอย่างเดียว
+  </p>
+
+  <div class="card">
+    <table class="table" data-testid="type-list">
+      <thead>
+        <tr>
+          <th>ชื่อประเภทการลา</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="type-list-body"></tbody>
+    </table>
   </div>
+</main>
+
+<script type="module" src="js/nav.js"></script>
+<script type="module" src="js/leave-types.js"></script>
 </body>
 </html>

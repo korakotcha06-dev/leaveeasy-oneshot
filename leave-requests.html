@@ -1,29 +1,88 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>รายการใบลา · LeaveEasy</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/util.js" defer></script>
-  <script src="js/icons.js" defer></script>
-  <script src="js/nav.js" defer></script>
-  <script src="js/leave-requests.js" type="module"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>รายการใบลา — LeaveEasy</title>
+<link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="nav"></div>
+<!-- nav-root ถูกเติมเนื้อหาโดย js/nav.js ตอนโหลดหน้า เหมือน index.html -->
+<div id="nav-root"></div>
 
-  <div class="container">
-    <h1>รายการใบลา</h1>
-    <p class="subtitle">ใบขอลาทั้งหมดในระบบ กดที่แถวเพื่อดูรายละเอียด</p>
+<main class="page">
+  <!-- ช่องแสดงข้อผิดพลาดช่องเดียวของหน้านี้ ใช้ทั้งตอนอ่านข้อมูลไม่สำเร็จ -->
+  <p class="field-error" data-testid="error-message" hidden></p>
 
-    <div class="btn-row">
-      <a class="btn" href="new-leave-request.html"><span data-icon="plus"></span>ยื่นใบลาใหม่</a>
-    </div>
-
-    <div id="ผลลัพธ์" class="card" style="margin-top:16px">
-      <p>กำลังโหลดข้อมูล…</p>
-    </div>
+  <div class="toolbar">
+    <h1 class="page-title" style="margin:0">รายการใบลา</h1>
+    <a class="btn btn-primary" href="new-leave-request.html" data-testid="new-request-button">
+      ยื่นใบลาใหม่
+    </a>
   </div>
+
+  <section class="card">
+    <!--
+      แถวเครื่องมือค้นหา/กรอง/เรียงลำดับ (US-10)
+      ใช้คลาส .field ตามกติกาข้อ 7 แม้จะไม่ใช่ฟอร์มบันทึกข้อมูลจริง
+      เพื่อให้หน้าตาช่องกรอกตรงกับช่องกรอกที่อื่นในระบบ
+    -->
+    <div class="toolbar">
+      <div class="field" style="margin-bottom:0; flex:1 1 200px;">
+        <label class="field-label" for="search-input">ค้นหาจากหัวข้อ</label>
+        <input class="field-input" id="search-input" type="text"
+               placeholder="พิมพ์คำที่อยู่ในหัวข้อใบลา" />
+      </div>
+      <div class="field" style="margin-bottom:0; min-width:160px;">
+        <label class="field-label" for="status-filter">กรองตามสถานะ</label>
+        <select class="field-input" id="status-filter">
+          <option value="">ทุกสถานะ</option>
+          <option value="รอพิจารณา">รอพิจารณา</option>
+          <option value="อนุมัติ">อนุมัติ</option>
+          <option value="ไม่อนุมัติ">ไม่อนุมัติ</option>
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0; min-width:160px;">
+        <label class="field-label" for="type-filter">กรองตามประเภทการลา</label>
+        <select class="field-input" id="type-filter">
+          <option value="">ทุกประเภท</option>
+          <!-- ตัวเลือกประเภทการลาถูกเติมโดย js/leave-requests.js หลังอ่านข้อมูลจริง -->
+        </select>
+      </div>
+      <div class="field" style="margin-bottom:0;">
+        <span class="field-label">เรียงลำดับ</span>
+        <button type="button" class="btn btn-ghost" id="sort-toggle">
+          เรียง: ใหม่ไปเก่า
+        </button>
+      </div>
+    </div>
+
+    <div id="table-wrapper" style="overflow-x:auto;">
+      <table class="table" data-testid="request-list">
+        <thead>
+          <tr>
+            <th>หัวข้อ</th>
+            <th>ประเภทการลา</th>
+            <th>สถานะ</th>
+            <th>ผู้ขอลา</th>
+            <th>วันที่ลา</th>
+          </tr>
+        </thead>
+        <tbody id="request-tbody"></tbody>
+      </table>
+    </div>
+
+    <!--
+      ข้อความเมื่อไม่มีอะไรจะแสดง มี 2 กรณีที่ข้อความต่างกัน (ดู contract.md ส่วนที่ 4)
+        1. ฐานข้อมูลยังไม่มีใบลาเลยสักใบ
+        2. มีข้อมูลอยู่ แต่คำค้น/ตัวกรองที่เลือกไม่ตรงกับใบไหนเลย
+      js/leave-requests.js เป็นคนสลับข้อความและ hidden ให้ตามสถานการณ์จริง
+    -->
+    <p class="empty" data-testid="empty-state" hidden></p>
+  </section>
+</main>
+
+<script type="module" src="js/nav.js"></script>
+<script type="module" src="js/leave-requests.js"></script>
 </body>
 </html>

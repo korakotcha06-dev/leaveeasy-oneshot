@@ -3,52 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>เข้าสู่ระบบ · LeaveEasy</title>
+  <title>เข้าสู่ระบบ — LeaveEasy</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/util.js" defer></script>
-  <script src="js/icons.js" defer></script>
-  <script src="js/nav.js" defer></script>
-  <script type="module" src="js/login.js"></script>
 </head>
-<body>
-  <div class="navbar"><span class="brand"><span data-icon="calendar-check"></span>LeaveEasy</span></div>
+<body class="page">
 
-  <div class="container" style="max-width:520px">
-    <h1>เข้าสู่ระบบ</h1>
-    <p class="subtitle">ต้องล็อกอินก่อน จึงจะเปิดดูใบลาได้</p>
+  <header class="toolbar">
+    <h1>LeaveEasy</h1>
+    <!-- ชื่อผู้ใช้ที่ล็อกอินอยู่ · ว่างเปล่าเมื่อยังไม่ได้ล็อกอิน -->
+    <span class="nav-link" data-testid="auth-state"></span>
+  </header>
 
-    <div id="ข้อความเตือน" class="alert alert-error hidden" role="alert"></div>
+  <!--
+    ช่องแสดงข้อผิดพลาดมีช่องเดียวใช้ร่วมกันทั้งสองฟอร์ม
+    ตั้งใจไม่ทำช่องละฟอร์ม เพราะ data-testid="error-message" ต้องมีแค่ตัวเดียวในหน้า
+    ไม่อย่างนั้นชุดทดสอบจะหาเจอสองตัวแล้วไม่รู้ว่าจะอ่านตัวไหน
+  -->
+  <p class="field-error" data-testid="error-message" hidden></p>
 
-    <div class="card">
-      <h2>มีบัญชีอยู่แล้ว</h2>
-      <label for="อีเมลเข้า">อีเมล</label>
-      <input type="email" id="อีเมลเข้า" autocomplete="username" placeholder="somchai@example.com">
+  <main>
+    <section class="card">
+      <h2>เข้าสู่ระบบ</h2>
+      <form id="form-signin" novalidate>
+        <div class="field">
+          <label class="field-label" for="signin-email">อีเมล</label>
+          <input class="field-input" id="signin-email" data-testid="signin-email"
+                 type="email" name="email" autocomplete="email">
+        </div>
+        <div class="field">
+          <label class="field-label" for="signin-password">รหัสผ่าน</label>
+          <input class="field-input" id="signin-password" data-testid="signin-password"
+                 type="password" name="password" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary" type="submit" data-testid="signin-submit">เข้าสู่ระบบ</button>
+      </form>
+    </section>
 
-      <label for="รหัสผ่านเข้า">รหัสผ่าน</label>
-      <input type="password" id="รหัสผ่านเข้า" autocomplete="current-password">
+    <section class="card">
+      <h2>สมัครสมาชิก</h2>
+      <p>ผู้สมัครใหม่ทุกคนได้บทบาท ผู้ขอลา (employee) การเปลี่ยนบทบาททำในหน้าจัดการของผู้ดูแลระบบเท่านั้น</p>
+      <form id="form-signup" novalidate>
+        <div class="field">
+          <label class="field-label" for="signup-name">ชื่อ-นามสกุล</label>
+          <input class="field-input" id="signup-name" data-testid="signup-name"
+                 type="text" name="name" autocomplete="name">
+        </div>
+        <div class="field">
+          <label class="field-label" for="signup-email">อีเมล</label>
+          <input class="field-input" id="signup-email" data-testid="signup-email"
+                 type="email" name="email" autocomplete="email">
+        </div>
+        <div class="field">
+          <label class="field-label" for="signup-password">รหัสผ่าน</label>
+          <input class="field-input" id="signup-password" data-testid="signup-password"
+                 type="password" name="password" autocomplete="new-password">
+        </div>
+        <button class="btn btn-primary" type="submit" data-testid="signup-submit">สมัครสมาชิก</button>
+      </form>
+    </section>
+  </main>
 
-      <div class="btn-row">
-        <button type="button" id="ปุ่มเข้าสู่ระบบ">เข้าสู่ระบบ</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>ยังไม่มีบัญชี — สมัครสมาชิก</h2>
-      <p class="hint">บัญชีที่สมัครใหม่ทุกบัญชีจะได้บทบาทเป็น ผู้ขอลา (employee)</p>
-
-      <label for="ชื่อสมัคร">ชื่อ-นามสกุล</label>
-      <input type="text" id="ชื่อสมัคร" placeholder="เช่น สมชาย ใจดี">
-
-      <label for="อีเมลสมัคร">อีเมล</label>
-      <input type="email" id="อีเมลสมัคร" autocomplete="username" placeholder="somchai@example.com">
-
-      <label for="รหัสผ่านสมัคร">รหัสผ่าน (อย่างน้อย 6 ตัวอักษร)</label>
-      <input type="password" id="รหัสผ่านสมัคร" autocomplete="new-password">
-
-      <div class="btn-row">
-        <button type="button" class="btn-ghost" id="ปุ่มสมัคร">สมัครสมาชิก</button>
-      </div>
-    </div>
-  </div>
+  <script type="module" src="js/login.js"></script>
 </body>
 </html>

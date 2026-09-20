@@ -3,33 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ใส่ข้อมูลตัวอย่างลง Firestore · LeaveEasy</title>
+  <title>ใส่ข้อมูลตัวอย่าง — LeaveEasy</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/icons.js" defer></script>
-  <script src="js/data.js" defer></script>
-  <script src="js/seed.js" type="module"></script>
 </head>
-<body>
-  <div class="container">
-    <h1>ใส่ข้อมูลตัวอย่างลง Firestore</h1>
-    <p class="subtitle">เครื่องมือใช้ครั้งเดียวของสัปดาห์ที่ 6 · ไม่ได้ใส่ไว้ในเมนู</p>
+<body class="page">
 
-    <div class="alert alert-warn">
-      หน้านี้จะเขียนข้อมูลตัวอย่างจาก <strong>js/data.js</strong> ขึ้น Firestore
-      <br>เขียนทับอย่างเดียว ไม่มีการลบ · กดซ้ำได้ ข้อมูลไม่ซ้ำ
-    </div>
+  <header class="toolbar">
+    <h1>ใส่ข้อมูลตัวอย่าง</h1>
+    <span class="nav-link" data-testid="auth-state"></span>
+  </header>
 
-    <div class="card">
-      <p>จะได้ <strong>users 3</strong> · <strong>leaveTypes 3</strong> ·
-         <strong>leaveRequests 5</strong> (รอพิจารณา 3 · อนุมัติ 1 · ไม่อนุมัติ 1)
-         และโฟลเดอร์ย่อย <strong>approvals</strong> อีก 4 รายการ</p>
-      <div class="btn-row">
-        <button type="button" class="btn" id="ปุ่มใส่ข้อมูล">ใส่ข้อมูลตัวอย่าง</button>
-        <a class="btn-ghost" href="leave-requests.html">ไปหน้ารายการใบลา</a>
+  <main>
+    <section class="card">
+      <p>
+        ปุ่มนี้เขียนข้อมูลตัวอย่างตามสเปกหัวข้อ 7 ลงฐานข้อมูล
+        ได้แก่ ผู้ใช้ 3 คน ประเภทการลา 3 แบบ ใบขอลา 5 ใบ และความเห็นการอนุมัติ 4 รายการ
+      </p>
+      <p>
+        กดซ้ำได้ไม่เสียหาย เพราะทุกไฟล์ถูกเขียนทับที่ชื่อไฟล์เดิม
+        ไม่ได้สร้างไฟล์ใหม่เพิ่มทุกครั้งที่กด
+      </p>
+      <p class="empty" data-testid="seed-target"></p>
+
+      <div class="toolbar">
+        <button class="btn btn-primary" type="button" data-testid="seed-button">ใส่ข้อมูลตัวอย่าง</button>
       </div>
-    </div>
 
-    <div id="ผลการทำงาน" style="margin-top:16px"></div>
-  </div>
+      <p class="field-error" data-testid="error-message" hidden></p>
+      <p data-testid="seed-status"></p>
+      <ul class="table" data-testid="seed-log"></ul>
+    </section>
+  </main>
+
+  <script type="module" src="js/seed.js"></script>
 </body>
 </html>

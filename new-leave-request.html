@@ -1,58 +1,103 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ยื่นใบลาใหม่ · LeaveEasy</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/util.js" defer></script>
-  <script src="js/icons.js" defer></script>
-  <script src="js/nav.js" defer></script>
-  <script type="module" src="js/new-leave-request.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ยื่นใบลาใหม่ — LeaveEasy</title>
+<link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="nav"></div>
+<!-- nav-root ถูกเติมเนื้อหาโดย js/nav.js ตอนโหลดหน้า (ดูรูปแบบเดียวกับ index.html) -->
+<div id="nav-root"></div>
 
-  <div class="container">
-    <h1>ยื่นใบลาใหม่</h1>
-    <p class="subtitle">กรอกให้ครบทุกช่อง แล้วกดบันทึก · ใบลาใหม่จะมีสถานะ รอพิจารณา เสมอ</p>
+<main class="page">
+  <h1 class="page-title">ยื่นใบลาใหม่</h1>
 
-    <div class="card">
-      <div id="ข้อความเตือน" class="alert alert-error hidden" role="alert"></div>
+  <!-- ช่องแสดงข้อผิดพลาดช่องเดียวของทั้งหน้า ใช้ร่วมกันทั้งการโหลดข้อมูลและการบันทึก -->
+  <p class="error-message" data-testid="error-message" hidden></p>
 
-      <!-- novalidate = ปิดข้อความเตือนของเบราว์เซอร์ ให้ JS คุมข้อความภาษาไทยเอง
-           ส่วน required ยังอยู่ เพื่อบอกโปรแกรมอ่านหน้าจอว่าช่องนี้จำเป็น -->
-      <form id="ฟอร์มใบลา" novalidate>
-        <label for="title">หัวข้อ</label>
-        <input type="text" id="title" required placeholder="เช่น ลาพักร้อนไปเที่ยวกับครอบครัว">
-
-        <label for="reason">เหตุผลการลา</label>
-        <textarea id="reason" required placeholder="เล่าเหตุผลสั้น ๆ ให้หัวหน้าเข้าใจ"></textarea>
-
-        <label for="leaveTypeId">ประเภทการลา</label>
-        <select id="leaveTypeId" required>
-          <option value="">— เลือกประเภทการลา —</option>
-        </select>
-
-        <!-- ปุ่ม AI ระดับ 1 (สัปดาห์ที่ 8) · กดแล้ว AI อ่านเหตุผล แล้วเสนอประเภทให้ คนยังแก้เองได้เสมอ -->
-        <div class="btn-row">
-          <button type="button" class="btn-ghost" id="ปุ่มAIจัดประเภท"><span data-icon="sparkles"></span>ให้ AI ช่วยจัดประเภทการลา</button>
-        </div>
-        <p class="hint">AI อ่านเฉพาะช่องเหตุผลการลา · อย่าใส่ข้อมูลส่วนตัวจริง เช่น ชื่อโรค เลขบัตร เบอร์โทร</p>
-        <div id="ผลAIจัดประเภท" class="alert alert-ai hidden" aria-live="polite"></div>
-
-        <label for="startDate">วันที่เริ่มลา</label>
-        <input type="date" id="startDate" required>
-
-        <label for="endDate">วันที่สิ้นสุด</label>
-        <input type="date" id="endDate" required>
-
-        <div class="btn-row">
-          <button type="submit" id="ปุ่มบันทึก">บันทึก</button>
-          <a class="btn btn-ghost" href="leave-requests.html">ยกเลิก</a>
-        </div>
-      </form>
+  <form id="new-request-form" class="card" novalidate>
+    <div class="field">
+      <label class="field-label" for="input-title">หัวข้อ</label>
+      <input
+        class="field-input"
+        id="input-title"
+        data-testid="field-title"
+        type="text"
+        name="title"
+        autocomplete="off"
+      />
     </div>
-  </div>
+
+    <div class="field">
+      <label class="field-label" for="input-reason">เหตุผลการลา</label>
+      <textarea
+        class="field-input"
+        id="input-reason"
+        data-testid="field-reason"
+        name="reason"
+        rows="4"
+      ></textarea>
+    </div>
+
+    <!--
+      ปุ่ม AI วางไว้ตรงนี้เพราะมันอ่านค่าจากช่องเหตุผลด้านบน แล้วเติมผลลงช่องประเภทด้านล่าง
+      ตำแหน่งนี้ทำให้เห็นความสัมพันธ์ของสามช่องนี้ชัดเจนที่สุด (สเปกข้อ 8 / US-09)
+    -->
+    <div class="field">
+      <button type="button" class="btn btn-ghost" data-testid="ai-classify-button">
+        ให้ AI ช่วยจัดประเภทการลา
+      </button>
+      <p
+        class="field-hint"
+        data-testid="ai-notice"
+        style="color: var(--color-primary); font-size: 0.9rem; margin: var(--space-2) 0 0;"
+        hidden
+      >
+        ข้อเสนอจาก AI — โปรดตรวจสอบก่อนยืนยัน
+      </p>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="input-leave-type">ประเภทการลา</label>
+      <select
+        class="field-input"
+        id="input-leave-type"
+        data-testid="field-leave-type"
+        name="leaveTypeId"
+      ></select>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="input-start-date">วันที่เริ่มลา</label>
+      <input
+        class="field-input"
+        id="input-start-date"
+        data-testid="field-start-date"
+        type="date"
+        name="startDate"
+      />
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="input-end-date">วันที่สิ้นสุด</label>
+      <input
+        class="field-input"
+        id="input-end-date"
+        data-testid="field-end-date"
+        type="date"
+        name="endDate"
+      />
+    </div>
+
+    <div class="toolbar">
+      <button type="submit" class="btn btn-primary" data-testid="save-button">บันทึก</button>
+      <button type="button" class="btn btn-ghost" data-testid="cancel-button">ยกเลิก</button>
+    </div>
+  </form>
+</main>
+
+<script type="module" src="js/nav.js"></script>
+<script type="module" src="js/new-leave-request.js"></script>
 </body>
 </html>

@@ -4,9 +4,20 @@
   "private": true,
   "description": "LeaveEasy — จุดเริ่มต้นของใบงาน ADT-RAISE Batch 2 Module 2",
   "scripts": {
-    "dev": "serve -l 3000 ."
+    "dev": "serve -l 3000 .",
+    "emulators": "PATH=\"/opt/homebrew/opt/openjdk/bin:$PATH\" firebase emulators:start",
+    "emulators:exec": "PATH=\"/opt/homebrew/opt/openjdk/bin:$PATH\" firebase emulators:exec",
+    "test": "npm run test:e2e",
+    "test:ci": "PATH=\"/opt/homebrew/opt/openjdk/bin:$PATH\" firebase emulators:exec --only auth,firestore,hosting \"npx playwright test\"",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:rules": "node --test \"tests/rules/**/*.test.js\"",
+    "test:report": "playwright show-report"
   },
   "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "@playwright/test": "^1.56.0",
     "serve": "^14.2.1"
   }
 }

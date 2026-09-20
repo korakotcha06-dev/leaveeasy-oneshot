@@ -1,45 +1,20 @@
-// ─────────────────────────────────────────────────────────────
-// js/home.js — หน้าแรก
-//
-// หน้าแรกเป็นหน้าเดียวที่เปิดดูได้โดยไม่ต้องล็อกอิน จึงไม่เรียก requireLogin
-// หน้าที่ของไฟล์นี้คือบอกให้ชัดว่า "ตอนนี้ล็อกอินอยู่หรือยัง" และทางเข้าอยู่ตรงไหน
-// ─────────────────────────────────────────────────────────────
+// js/home.js
+// พฤติกรรมเฉพาะของหน้าแรก มีน้อยมากตามเจตนา — ตัวหน้าแรกส่วนใหญ่เป็น static link
+// สิ่งเดียวที่ต้องทำเอง (นอกเหนือจาก nav.js) คือ ซ่อนปุ่ม "เข้าสู่ระบบ" ตอนที่ล็อกอินอยู่แล้ว
+// เพราะถ้าล็อกอินอยู่แล้วปุ่มนี้ไม่มีประโยชน์ และอาจทำให้สับสนว่าต้องล็อกอินซ้ำหรือไม่
 
-import { hasConfig } from "./firebase.js";
-import { รอสถานะล็อกอิน, ออกจากระบบ } from "./auth.js";
+import { onUser } from "./auth.js";
 
-const กล่อง = document.getElementById("กล่องเข้าสู่ระบบ");
+function toggleLoginLink(user) {
+  const loginLink = document.getElementById("home-login-link");
+  if (!loginLink) return;
+  // มี user แปลว่าล็อกอินอยู่แล้ว จึงซ่อนปุ่มเข้าสู่ระบบ
+  loginLink.hidden = Boolean(user);
+}
 
-เริ่มทำงาน();
-
-async function เริ่มทำงาน() {
-  if (!hasConfig || !กล่อง) return;
-
-  const ผู้ใช้ = await รอสถานะล็อกอิน();
-  if (!ผู้ใช้) return;          // ยังไม่ล็อกอิน — คงปุ่ม "เข้าสู่ระบบ / สมัครสมาชิก" ไว้ตามเดิม
-
-  // ล็อกอินอยู่แล้ว ไม่ต้องชวนล็อกอินซ้ำ · พาไปหน้าที่ใช้งานจริงเลย
-  กล่อง.innerHTML =
-    '<a class="btn" href="leave-requests.html">ไปที่รายการใบลา</a>' +
-    '<button type="button" class="btn-ghost" id="ปุ่มออกจากระบบหน้าแรก">ออกจากระบบ</button>';
-  document.getElementById("ปุ่มออกจากระบบหน้าแรก").addEventListener("click", ออกจากระบบ);
-
-  const คำอธิบาย = กล่อง.nextElementSibling;
-  if (คำอธิบาย && คำอธิบาย.classList.contains("hint")) {
-    คำอธิบาย.textContent = "เข้าสู่ระบบอยู่ในชื่อ " + ผู้ใช้.email;
-  }
-
-  // แถบเมนูมุมขวาบน: เปลี่ยนจากปุ่มเข้าสู่ระบบ เป็นชื่อผู้ใช้กับปุ่มออกจากระบบ
-  const มุมขวา = document.getElementById("navUser");
-  if (มุมขวา) {
-    มุมขวา.innerHTML = "";
-    const ชื่อ = document.createElement("span");
-    ชื่อ.textContent = ผู้ใช้.email;
-    const ปุ่ม = document.createElement("button");
-    ปุ่ม.type = "button";
-    ปุ่ม.className = "btn-ghost";
-    ปุ่ม.textContent = "ออกจากระบบ";
-    ปุ่ม.addEventListener("click", ออกจากระบบ);
-    มุมขวา.append(ชื่อ, ปุ่ม);
-  }
+try {
+  onUser((user) => toggleLoginLink(user));
+} catch (err) {
+  // auth.js อาจยังไม่พร้อมระหว่างพัฒนา ไม่ควรทำให้หน้าแรกใช้งานไม่ได้ทั้งหน้า
+  console.error("home.js: onUser ใช้งานไม่ได้", err);
 }
