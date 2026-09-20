@@ -13,7 +13,8 @@
       "package-lock.json",
       "serve.json",
       "firestore.rules",
-      "js/ai-config.example.js"
+      "js/ai-config.example.js",
+      "js/ai-config.js"
     ],
     "headers": [
       {
