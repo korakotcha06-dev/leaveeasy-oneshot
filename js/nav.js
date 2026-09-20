@@ -22,8 +22,10 @@
     var active = m.href === หน้าปัจจุบัน ? ' class="active"' : "";
     html += '<a href="' + m.href + '"' + active + ">" + m.ชื่อ + "</a>";
   });
-  // ช่องว่างสำหรับแสดงชื่อคนที่ล็อกอินอยู่ (เติมค่าในสัปดาห์ที่ 7)
-  html += '<span class="nav-user" id="navUser"></span></div>';
+  // มุมขวาของแถบเมนู · ตั้งต้นเป็นปุ่มเข้าสู่ระบบ ให้คนที่เพิ่งเข้าเว็บเห็นทางเข้าทันที
+  // พอล็อกอินแล้ว auth.js จะเขียนทับด้วยชื่อผู้ใช้ บทบาท และปุ่มออกจากระบบ
+  html += '<span class="nav-user" id="navUser">' +
+          '<a class="btn btn-ghost" href="login.html">เข้าสู่ระบบ</a></span></div>';
 
   var ที่วาง = document.getElementById("nav");
   if (ที่วาง) ที่วาง.innerHTML = html;

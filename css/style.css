@@ -37,6 +37,9 @@ body {
 .navbar a { color: #fff; text-decoration: none; padding: 4px 2px; }
 .navbar a:hover, .navbar a.active { border-bottom: 3px solid #ffd166; }
 .navbar .nav-user { margin-left: auto; display: flex; align-items: center; gap: 10px; font-size: 15px; }
+/* ปุ่มในแถบเมนูต้องล็อกสีตัวอักษรเอง ไม่งั้น .navbar a (สีขาว) ทับ แล้วกลายเป็นขาวบนขาว อ่านไม่ออก */
+.navbar .nav-user a.btn-ghost { color: var(--สีหลัก); text-decoration: none; border-bottom: none; }
+.navbar .nav-user a.btn-ghost:hover { background: #e8f1f8; border-bottom: none; }
 
 /* ── กรอบเนื้อหา ── */
 .container { max-width: 960px; margin: 0 auto; padding: 20px 16px 60px; }
