@@ -39,6 +39,7 @@ const {
   TEST_PASSWORD,
   LEAVE_TYPES,
   detailUrl,
+  findRequest,
   seedEmulator,
   signInAs,
   byTestId,
@@ -288,6 +289,62 @@ test.describe("ช่องที่ 2 ยังไม่ล็อกอิน�
       await expect(page.locator("body")).not.toContainText("ลาพักร้อนไปเที่ยวกับครอบครัว");
     });
   }
+
+  // ─────────────────────────────────────────────────────────
+  // สวมรอย · ล็อกอินด้วยบัญชีหนึ่ง แล้วเปิดใบลาของอีกบัญชีด้วย URL ตรง ๆ
+  // นี่คือการทดสอบที่สเปกสัปดาห์ที่ 8 ใช้วัด (หัวข้อ 8 ช่อง "ผ่านสัปดาห์นี้เมื่อ")
+  // ชุดกฎ tests/rules ตรวจข้อนี้ที่ระดับฐานข้อมูลแล้ว ตรงนี้ตรวจที่ระดับหน้าจอ
+  // ว่าผู้ใช้จริงเปิดดูไม่ได้ และไม่มีเนื้อหารั่วออกมาบนหน้า
+  // ─────────────────────────────────────────────────────────
+
+  test("สวมรอย พนักงานเปิดใบลาของคนอื่นด้วย URL ตรง ต้องเปิดไม่ได้และไม่เห็นเนื้อหาใบนั้น", async ({ page }) => {
+    const ใบของคนอื่น = findRequest("lr003");
+    // lr003 เป็นใบของสมศรี (hr) ไม่ใช่ของสมชาย (employee) ที่จะล็อกอินเข้าไป
+    expect(ใบของคนอื่น.requesterId).not.toBe(TEST_USERS.employee.uid);
+
+    await signInAs(page, "employee");
+    await page.goto(detailUrl("lr003"));
+
+    // ต้องมีข้อความบอกผู้ใช้ ไม่ใช่หน้าขาวหรือค้างอยู่เฉย ๆ
+    await expect(byTestId(page, TESTID.errorMessage)).toBeVisible();
+
+    // และห้ามมีเนื้อหาของใบนั้นรั่วออกมาบนหน้าจอแม้แต่ช่องเดียว
+    // เหตุผลการลาคือข้อมูลส่วนตัวที่สเปก US-08 บอกว่าต้องไม่ให้เพื่อนร่วมงานอ่าน
+    await expect(page.locator("body")).not.toContainText(ใบของคนอื่น.title);
+    await expect(page.locator("body")).not.toContainText(ใบของคนอื่น.reason);
+  });
+
+  test("ใบลาของตัวเองยังเปิดดูได้ตามปกติ ยืนยันว่าเทสสวมรอยไม่ได้ผ่านเพราะหน้าพัง", async ({ page }) => {
+    // ถ้าหน้ารายละเอียดพังจนไม่แสดงอะไรเลย เทสสวมรอยด้านบนก็จะเขียวแบบหลอก ๆ
+    // เทสนี้คือตัวคุม ยืนยันว่าหน้าทำงานได้จริงกับใบที่มีสิทธิ์
+    const ใบของตัวเอง = findRequest("lr001");
+    expect(ใบของตัวเอง.requesterId).toBe(TEST_USERS.employee.uid);
+
+    await signInAs(page, "employee");
+    await page.goto(detailUrl("lr001"));
+
+    await expect(byTestId(page, TESTID.detailTitle)).toContainText(ใบของตัวเอง.title);
+    await expect(byTestId(page, TESTID.detailReason)).toContainText(ใบของตัวเอง.reason);
+  });
+
+  test("สวมรอย พนักงานยิงคำสั่งอ่านใบของคนอื่นตรงเข้าชั้นข้อมูล ถูก firestore.rules ปฏิเสธ", async ({ page }) => {
+    // ซ่อนปุ่มหรือดักที่หน้าจอไม่ใช่ความปลอดภัย คนที่เปิด DevTools ข้ามหน้าเว็บได้ทั้งหมด
+    // เทสนี้เรียก data.js ที่หน้าใช้อยู่จริง (auth token เดียวกัน) โดยไม่ผ่าน UI เลย
+    await signInAs(page, "employee");
+
+    const ผล = await page.evaluate(async () => {
+      try {
+        const data = await import("/js/data.js");
+        const ใบ = await data.getLeaveRequest("lr003");
+        return { สำเร็จ: true, ได้ข้อมูล: ใบ !== null };
+      } catch (err) {
+        return { สำเร็จ: false, code: err.code || String(err) };
+      }
+    });
+
+    expect(ผล.สำเร็จ, "ชั้นข้อมูลต้องปฏิเสธ ไม่ใช่คืนข้อมูลใบของคนอื่นมาให้").toBe(false);
+    expect(String(ผล.code)).toContain("permission-denied");
+  });
 });
 
 // ═════════════════════════════════════════════════════════════
