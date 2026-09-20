@@ -50,6 +50,16 @@
   box-sizing: border-box;
 }
 
+/* แอตทริบิวต์ hidden ของ HTML ต้องชนะคลาสของเราเสมอ
+   เบราว์เซอร์ซ่อน element ที่มี hidden ด้วยกฎ [hidden]{display:none} ใน UA stylesheet
+   ซึ่งเป็นสไตล์ชั้นล่างสุด แพ้กฎในไฟล์นี้ทุกกฎ ดังนั้นคลาสไหนที่ประกาศ display เอง
+   เช่น .btn ที่เป็น inline-flex จะยังโชว์อยู่แม้ JS สั่ง el.hidden = true
+   (บั๊กจริงที่เจอ คือปุ่มเข้าสู่ระบบกลางหน้าแรกไม่ยอมหายหลังล็อกอิน)
+   ประกาศไว้ที่นี่ทีเดียวจึงคุมทุกหน้า และ el.hidden = true ใช้ได้ตามที่คาดทุกที่ */
+[hidden] {
+  display: none !important;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
 }
