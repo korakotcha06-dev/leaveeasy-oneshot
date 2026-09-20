@@ -98,6 +98,52 @@ test.describe("US-02 ฟอร์มยื่นใบลาใหม่", () =>
     expect(ใบที่สร้าง.leaveTypeName).toBe(findLeaveType("lt001").name);
   });
 
+  test("เว้นช่องหัวข้อไว้แล้วกดบันทึก ต้องไม่บันทึกและต้องขึ้นข้อความบอก", async ({ page }) => {
+    const จำนวนก่อนกด = (await listDocs("leaveRequests")).length;
+
+    await signInAs(page, "employee", { goto: PAGES.newLeaveRequest });
+
+    // กรอกครบทุกช่อง ยกเว้นหัวข้อที่เว้นว่างไว้
+    await byTestId(page, TESTID.fieldReason).fill("เหตุผลครบถ้วน แต่ตั้งใจไม่กรอกหัวข้อ");
+    await byTestId(page, TESTID.fieldLeaveType).selectOption("lt001");
+    await byTestId(page, TESTID.fieldStartDate).fill("2026-11-20");
+    await byTestId(page, TESTID.fieldEndDate).fill("2026-11-21");
+    await byTestId(page, TESTID.saveButton).click();
+
+    // ต้องขึ้นข้อความเตือนให้ผู้ใช้เห็น ไม่ใช่เงียบไปเฉย ๆ
+    await expect(byTestId(page, TESTID.errorMessage)).toBeVisible();
+    await expect(byTestId(page, TESTID.errorMessage)).not.toBeEmpty();
+
+    // ต้องอยู่หน้าเดิม ไม่พากลับหน้ารายการเหมือนตอนบันทึกสำเร็จ
+    await expect(page).toHaveURL(/new-leave-request\.html$/);
+
+    // และต้องไม่มีเอกสารงอกในฐานข้อมูล ข้อนี้สำคัญที่สุด
+    // เพราะข้อความเตือนขึ้นแต่ยังเขียนลงฐานได้ คือสิ่งที่แย่ที่สุดของทั้งสองอย่าง
+    const จำนวนหลังกด = (await listDocs("leaveRequests")).length;
+    expect(จำนวนหลังกด).toBe(จำนวนก่อนกด);
+  });
+
+  test("กรอกหัวข้อเป็นช่องว่างล้วนแล้วกดบันทึก ต้องถูกปฏิเสธเหมือนเว้นว่าง", async ({ page }) => {
+    // js/new-leave-request.js เรียก .trim() ก่อนตรวจ เทสนี้ตรึงพฤติกรรมนั้นไว้
+    // ถ้าวันหนึ่งมีคนถอด .trim() ออก ใบลาที่มีหัวข้อเป็นช่องว่างจะหลุดลงฐานได้เงียบ ๆ
+    const จำนวนก่อนกด = (await listDocs("leaveRequests")).length;
+
+    await signInAs(page, "employee", { goto: PAGES.newLeaveRequest });
+
+    await byTestId(page, TESTID.fieldTitle).fill("     ");
+    await byTestId(page, TESTID.fieldReason).fill("เหตุผลครบถ้วน แต่หัวข้อเป็นช่องว่างล้วน");
+    await byTestId(page, TESTID.fieldLeaveType).selectOption("lt001");
+    await byTestId(page, TESTID.fieldStartDate).fill("2026-11-20");
+    await byTestId(page, TESTID.fieldEndDate).fill("2026-11-21");
+    await byTestId(page, TESTID.saveButton).click();
+
+    await expect(byTestId(page, TESTID.errorMessage)).toBeVisible();
+    await expect(page).toHaveURL(/new-leave-request\.html$/);
+
+    const จำนวนหลังกด = (await listDocs("leaveRequests")).length;
+    expect(จำนวนหลังกด).toBe(จำนวนก่อนกด);
+  });
+
   test("กดยกเลิกกลับไปหน้ารายการ โดยไม่สร้างเอกสารใหม่เลย", async ({ page }) => {
     const จำนวนก่อนกด = (await listDocs("leaveRequests")).length;
 
